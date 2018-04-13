@@ -1,0 +1,15 @@
+version: "3"
+services:
+  web:
+    build: ./docker/web
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker-config/000-default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./docker-config/php.ini:/usr/local/etc/php/php.ini
+
+  build:
+    build: ./docker/build
+    volumes:
+      - .:/var/www/html

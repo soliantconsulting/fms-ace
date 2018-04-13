@@ -1,0 +1,119 @@
+<div class="modal fade md-modal colored-header" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <form method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add "Verify" Schedule to FileMaker</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-10 text-center message"></div>
+                        <div class="col-sm-1"></div>
+                    </div>
+                    <form>
+                        <div class="form-group" style="display:none">
+                            <ul class="list-unstyled alert alert-danger global-errors"></ul>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Schedule name (1-31 characters)</label>
+                            <input type="text" class="form-control" id="name" name="name" required="required" maxlength="31">
+                        </div>
+                        <div class="form-group">
+                            <label for="freqType">Schedule run frequency type</label>
+                            <select name="freqType" id="freqType" class="form-control" required="required">
+                                <option value="1">Once Only</option>
+                                <option value="2">Daily or Every n Days</option>
+                                <option value="3">Weekly</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="startDate">Schedule start date/time</label>
+                            <div class='input-group date' id='startDate'>
+                                <input type='text' name="startDate" class="form-control" required="required">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="freqType">Target</label>
+                            <select name="target" id="target" class="form-control" required="required">
+                                <option value="2">All Databases</option>
+                                <option value="3">Some Databases under a subfolder</option>
+                                <option value="4">Single Database</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fromTarget">FileMaker database folder path (target = 3) or FileMaker database name (target = 4). Allowed only and required if target = 3 or 4.</label>
+                            <input type="text" class="form-control" id="fromTarget" name="fromTarget">
+                        </div>
+                        <div class="form-group">
+                            <label for="messageText">Message content to be sent to FileMaker clients when the database is closing (0 to 200 characters).</label>
+                            <input type="text" class="form-control" id="messageText" name="messageText">
+                        </div>
+                        <div class="form-group">
+                            <label for="timeout">Time delayed before the message is sent (unit is minutes). Must be an integer from 0 to 60. The default is 2 minutes.</label>
+                            <input type="number" class="form-control" id="timeout" name="timeout" min="0" max="60">
+                        </div>
+                        <div class="form-group">
+                            <label for="repeatTask">Whether to repeat the task within a day.</label>
+                            <input type="checkbox" class="inline-checkbox" id="repeatTask" name="repeatTask" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="repeatInterval">Time unit for task repeat frequency (1 for minute, 2 for hour). Allowed only and required if "repeatTask" is true.</label>
+                            <input type="number" class="form-control" id="repeatInterval" name="repeatInterval">
+                        </div>
+                        <div class="form-group">
+                            <label for="repeatFrequency">Time interval to repeat the task. Allowed only and required if "repeatTask" is true. Must be an integer from 1 to 60 when repeatInterval = 1 or from 1 to 24 when repeatInterval=2.</label>
+                            <input type="number" class="form-control" id="repeatFrequency" name="repeatFrequency">
+                        </div>
+                        <div class="form-group">
+                            <label>Days of the week</label>
+                            <input type="checkbox" class="inline-checkbox" value="0" name="daysOfTheWeek[]"> Sunday
+                            <input type="checkbox" class="inline-checkbox" value="0" name="daysOfTheWeek[]"> Monday
+                            <input type="checkbox" class="inline-checkbox" value="0" name="daysOfTheWeek[]"> Tuesday
+                            <input type="checkbox" class="inline-checkbox" value="0" name="daysOfTheWeek[]"> Wednesday
+                            <input type="checkbox" class="inline-checkbox" value="0" name="daysOfTheWeek[]"> Thursday
+                            <input type="checkbox" class="inline-checkbox" value="0" name="daysOfTheWeek[]"> Friday
+                            <input type="checkbox" class="inline-checkbox" value="0" name="daysOfTheWeek[]"> Saturday
+                        </div>
+                        <div class="form-group">
+                            <label for="dailyDays">Daily Days</label>
+                            <input type="number" class="form-control" id="dailyDays" name="dailyDays" min="1" max="999">
+                        </div>
+                        <div class="form-group">
+                            <label for="enableEndDate">Enable end date.</label>
+                            <input type="checkbox" class="inline-checkbox" id="enableEndDate" name="enableEndDate" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">End Date:</label>
+                            <div class='input-group date' id='endDate'>
+                                <input type='text' name="endDate" class="form-control" required="required">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="sendEmail">Whether to send mail email. Note: SMTP configuration is required for sending email.</label>
+                            <input type="checkbox" class="inline-checkbox" id="sendEmail" name="sendEmail" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="emailAddresses">Email addresses separated by comma. Allowed only and required if "sendEmail" is true</label>
+                            <input type="text" class="form-control" id="emailAddresses" name="emailAddresses">
+                        </div>
+                        <div class="form-group">
+                            <label for="enabled">Whether to enable or disable the schedule after successful creation or edit. The default is false.</label>
+                            <input type="checkbox" class="inline-checkbox" id="enabled" name="enabled" value="1">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" name="add-schedule" class="btn btn-success">Add Schedule</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+{
+  "name": "fms-ace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "public/index.html",
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-es2015": "^6.24.1",
+    "block-ui": "^2.70.1",
+    "bootstrap": "^3.3.7",
+    "buildify": "^0.4.0",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47",
+    "css-loader": "^0.28.11",
+    "file-loader": "^1.1.11",
+    "font-awesome": "^4.7.0",
+    "fullcalendar": "^3.9.0",
+    "html-loader": "^0.5.5",
+    "jquery": "^3.3.1",
+    "jquery-mask-plugin": "^1.14.12",
+    "jquery.cookie": "carhartl/jquery-cookie",
+    "moment": "^2.22.0",
+    "moment-timezone": "^0.5.14",
+    "ncp": "^2.0.0",
+    "style-loader": "^0.20.3",
+    "webpack": "^4.5.0",
+    "webpack-cli": "^2.0.14"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "build": "webpack",
+    "buildjs": "node build/buildjs.js",
+    "buildcss": "node build/buildcss.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@versions.soliantconsulting.com:7999/aim/aim-high-development.git"
+  },
+  "keywords": [
+    "filemaker",
+    "php7.1",
+    "simpleFm",
+    "expressive"
+  ],
+  "author": "Jesse LaVere",
+  "license": "ISC"
+}

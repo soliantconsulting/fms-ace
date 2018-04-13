@@ -1,0 +1,15 @@
+.DS_Store
+.idea
+.vagrant
+.composer
+*.spf
+vendor
+node_modules/
+public/dist
+public/temp
+data/log.txt
+data/cache
+.bash_history
+log/
+yarn-error.log
+es6/config/version.local.js

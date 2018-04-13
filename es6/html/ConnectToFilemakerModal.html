@@ -1,0 +1,40 @@
+<div class="modal fade md-modal colored-header" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <form method="post">
+            <input type="hidden" name="csrf"/>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Connect to FileMaker Server</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-10 text-center message"></div>
+                        <div class="col-sm-1"></div>
+                    </div>
+                    <form>
+                        <div class="form-group" style="display:none">
+                            <ul class="list-unstyled alert alert-danger global-errors"></ul>
+                        </div>
+                        <div class="form-group">
+                            <label for="server">Server</label>:
+                            <input type="text" class="form-control" id="server" name="server" required="required">
+                        </div>
+                        <div class="form-group">
+                            <label for="username">Username</label>:
+                            <input type="text" class="form-control" id="username" name="username" required="required">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>:
+                            <input type="password" class="form-control" id="password" name="password" required="required">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" name="connect" class="btn btn-success">Connect</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
