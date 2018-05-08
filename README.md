@@ -1,31 +1,41 @@
-# FMS ACE (FileMaker Server Admin Console Extension)
+# FMS ACE
 
-Pronounced as F.M.S. Ace
+FileMaker Server Admin Console Extension.
 
-## Development
+FMS ACE (FileMaker Server Admin Console Extension) is a JavaScript application just like the stock FileMaker Server Admin Console. It provides features not included in the stock Admin Console, but supported by the [FileMaker Server 17 Admin API][blog].
 
-To run the project in development, you need to have [Docker](https://www.docker.com/) and
-[Docker Compose](https://docs.docker.com/compose/) installed.
+This version of FMS ACE provides the following enhancement:
 
-### Development Quick Start (See devrefresh for more info)
-  - Shorthand Development Environment Refresh
-    - Runs a subset of above commands to quickly refresh dev after changes have been made.
-      - `./devrefresh.sh`
-    - To force all the Docker images to update, you can run it with the `--hard` switch
-      - `./devrefresh.sh --hard`
+* Display all schedules on the server in a calendar view
+* Filter the schedule display by schedule type
+* Create "verify database" schedules
+* Create "send message" schedules
 
-You can now access the project via [http://localhost:8080](http://localhost:8080).
-# Docker Development Environment
+Take a look at [the roadmap on GitHub][issues], and submit your own feature request if you have additional ideas. FMS ACE is open source, and we'd love your support if you have JavaScript development skills. See [the contributing guidelines on GitHub][contributing] for more details.
 
-This application is running apache2/php7.2 built with Docker and stored in git. Php package
-dependencies are managed with composer in package.json. Javascript and CSS package dependencies are managed with npm in
-composer.json. 
+[blog]: https://www.soliantconsulting.com/blog/filemaker-17-admin-console
+[issues]: https://github.com/soliantconsulting/fms-ace/issues
+[contributing]: https://github.com/soliantconsulting/fms-ace/blob/master/CONTRIBUTING.md
 
-## Making continuous changes in the /es6 directory
+## Quick Start Installation
 
-While working on the front-end, you may have to call webpack multiple times. Instead you can run the following command,
-which while watch the directory for changes and rebuild when required:
+Download [the latest version from here][zip] and copy the contents of the zip archive to the following location:
 
+[zip]: https://github.com/soliantconsulting/fms-ace/raw/master/built-files/fms-ace.zip
+
+### Windows
 ```
-docker-compose run --rm build webpack --mode development --watch
+C:\Program Files\FileMaker\FileMaker Server\HTTPServer\conf\fms-ace\
 ```
+
+### Mac
+```
+/Library/FileMaker Server/HTTPServer/htdocs/httpsRoot/fms-ace/
+```
+
+## That's it!
+
+Now you should be able to access FMS ACE on your FileMaker Server at the `/fms-ace` route on your server. For example: [https://myserver.soliant.cloud/fms-ace][example]
+
+[example]: https://myserver.soliant.cloud/fms-ace
+

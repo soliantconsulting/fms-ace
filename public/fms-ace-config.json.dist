@@ -1,0 +1,16 @@
+{
+    "useProxy": true,
+    "sslVerify": true,
+    "fmsHosts": [
+        {
+            "host": "example.soliant.cloud",
+            "scheme": "https",
+            "port": "443"
+        },
+        {
+            "host": "localhost",
+            "scheme": "https",
+            "port": "443"
+        }
+    ]
+}

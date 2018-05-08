@@ -1,0 +1,50 @@
+<div class="modal fade md-modal colored-header" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <form method="post">
+            <input type="hidden" name="csrf"/>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Event Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-10 text-center message">
+                            <label>Start:</label>
+                            <span id="start"></span>
+                        </div>
+                        <div class="col-sm-1"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-10 text-center message">
+                            <label>End:</label>
+                            <span id="end"></span>
+                        </div>
+                        <div class="col-sm-1"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-10 text-center message">
+                            <label>Last Run:</label>
+                            <span id="lastRun"></span>
+                        </div>
+                        <div class="col-sm-1"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-10 text-center message">
+                            <label>Last Error:</label>
+                            <span id="lastError"></span>
+                        </div>
+                        <div class="col-sm-1"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" id="delete" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

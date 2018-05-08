@@ -13,3 +13,4 @@ data/cache
 log/
 yarn-error.log
 es6/config/version.local.js
+public/fms-ace-config.json

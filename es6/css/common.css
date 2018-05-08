@@ -1,24 +1,107 @@
-div.centered {
-    width: 100px;
-    height: 100px;
+div.centered { width: 100px; height: 100px; position: absolute; top:0; bottom: 0; left: 0; right: 0; margin: auto; }
+button.connect { white-space: nowrap; }
+.fc-event { background-color:#ffffff; border-color: #d2d2d2; }
+.btn-event-backup { background-color: #cc79a7; }
+i.event-backup,
+a.event-backup div.fc-content .fc-title i { color:#cc79a7; }
+.btn-event-verify { background-color: #009e73; }
+i.event-verify,
+a.event-verify div.fc-content .fc-title i { color:#009e73; }
+.btn-event-filemaker-script { background-color: #0072b2; }
+i.event-filemaker-script,
+a.event-filemaker-script div.fc-content .fc-title i { color:#0072b2; }
+.btn-event-system-script { background-color: #e69f00; }
+i.event-system-script,
+a.event-system-script div.fc-content .fc-title i { color:#e69f00; }
+.btn-event-script-sequence { background-color: #f0e442; }
+i.event-script-sequence,
+a.event-script-sequence div.fc-content .fc-title i { color:#f0e442; }
+.btn-event-message { background-color: #d55e00; }
+i.event-message,
+a.event-message div.fc-content .fc-title i { color:#d55e00; }
 
-    position: absolute;
-    top:0;
+body, html { height: 100%; margin: 0; background-color: #fff; }
+
+footer { background-color: #fff; padding-top: 15px; }
+footer a, footer a:visited, footer a:active { color: #dfb927; }
+footer a:hover { color: #000; text-decoration: underline; }
+ul.footer_links, ul.footer_version { display: inline; list-style-type: none; }
+ul.footer_version { padding-left: 0; }
+ul.footer_links li, ul.footer_version li { display: inline; }
+ul.footer_links li, ul.footer_version li { color: #333; border-left: 1px solid #999; padding-left: 7px; padding-right: 4px; }
+ul.footer_links li:first-child, ul.footer_links li:nth-child(2), ul.footer_version li:first-child { border-left: none; padding-left: 0; }
+ul.footer_links li a i:hover { background-color: #000; text-decoration: none; }
+
+.home-padding { padding-top: 75px; }
+.splash {
+    background-image: url("../images/bkgrnd-splash.jpg");
+    overflow: hidden;
+    background-position: center;
+    background-repeat: no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
     bottom: 0;
-    left: 0;
-    right: 0;
-
-    margin: auto;
+    height: 100%;
 }
+.splash-block > img { width: 100%; }
+.splash-content h1 { color: #fff; font-size: 2.4em; font-weight: 300; line-height: 1.25em; margin-top: 0; margin-bottom: .92em; }
+.splash-content p, .splash-content ul { color: #fff; font-size: 1.2em; font-weight: 300; line-height: 1.25em; margin-bottom: 1.1em; }
+.splash-content ul { margin-bottom: 1.2em; }
+.splash-content ul > li { margin-bottom: .4em; }
+.splash-content p.acronym { font-weight: 400; margin-top: 10px; margin-bottom: 0;  }
+.splash-content p + .btn-group { margin-top: 10px; }
+.btn-white, .btn-white:focus, .btn-white:active { background-color: #fff; border: none!important; color: #234063!important; }
+.splash-content a, .splash-content a:visited { color: #fff; text-decoration: underline; }
+.splash-content a:hover { opacity: .7; text-decoration: none; }
+.btn-white:hover { opacity: .8; }
+.splash-content .message { background-color: #fff; color: #000; opacity: .4; margin-top: 60px; font-weight: 500; padding-top: 15px; padding-bottom: 15px; }
 
-button.connect {
-    white-space: nowrap;
-}
+/* Place the "full-calendar" div directly inside the "calendar-parent" div. It needs a wide bottom margin to account for the custom header content. */
+#calendar-parent { position: fixed; top: 20px; bottom: 200px; left: 20px; right: 20px; }
+/* The "full-calendar" div is the element that JavaScript binds to and it inherits height from the parent element. */
+#full-calendar { background-color: #fff; padding: 15px; }
 
-a.script-event {
-    background-color:lightgrey;
+#calendar .bg-success { color: #000; opacity: .4; font-weight: 500; margin-top: 15px; padding-top: 10px; padding-bottom: 10px; }
+.calendar-outer { margin-top: 40px; margin-bottom: 40px; }
+.calendar-legend { background-color: #fff; padding: 5px 15px 15px 15px; text-align: right; width: 100%; }
+.titleBar h2,
+.fc-toolbar .fc-center h2 {
+    background-image: url("../images/icon-fms-ace.png");
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-size: 40px 55px;
+    padding-left: 50px;
+    font-size: 1.86em;
+    line-height: 55px;
+    margin-top: 5px;
+    text-align: left!important;
+    width: 100%!important;
 }
+.fc-toolsbar .fc-header-toolbar .checboxContainer label { font-weight: 500!important;}
+.fc-toolsbar .fc-header-toolbar .checkboxContainer input[type="checkbox"] { margin: 4px 8px 0 4px!important; }
+.fc-unthemed th { background-color: #ddd; padding-top: 4px!important; padding-bottom: 4px!important;}
+.checkboxContainer > label { font-weight: 400!important; line-height: 30px; vertical-align: middle; margin-right: 2px!important; }
+.checkboxContainer > .input[type="radio"], .checkboxContainer > .input[type="checkbox"] { margin-left: 3px!important; }
 
-a.backup-event {
-    background-color:lightskyblue;
+#full-calendar button.fc-button.fc-state-default {
+    color: #fff;
+    background: #c9de96;
+    background: -moz-linear-gradient(top, #c9de96 0%, #8ab66b 89%, #8ab66b 100%);
+    background: -webkit-linear-gradient(top, #c9de96 0%,#8ab66b 89%,#8ab66b 100%);
+    background: linear-gradient(to bottom, #c9de96 0%,#8ab66b 89%,#8ab66b 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c9de96', endColorstr='#8ab66b',GradientType=0 );
+    text-shadow: none!important;
 }
+#full-calendar button.fc-button.fc-state-default.fc-state-disabled { color: #444!important; }
+#full-calendar button.fc-button.fc-state-default.fc-state-active { color: #cdc!important; background: #585!important; filter: ""; text-shadow: none!important; font-weight: 500!important; }
+#full-calendar button[disabled] { color: #444!important; }
+#full-calendar .fc-state-disabled { opacity: .5!important; }
+
+.checkboxContainer { margin-bottom: 10px!important; }
+.toggle-on.btn { color: #fff; }
+label.btn.btn-event-script-sequence.toggle-on { text-shadow: 0 0 6px #c92; }
+
+.modal-content { border: none!important; }
+.modal-header { background-color: #21617A; color: #fff; -webkit-border-top-right-radius: 6px; -webkit-border-top-left-radius: 6px; -moz-border-radius-topright: 6px; -moz-border-radius-topleft: 6px; border-top-right-radius: 6px; border-top-left-radius: 6px; }
