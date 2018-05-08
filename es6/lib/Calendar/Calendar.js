@@ -7,6 +7,7 @@ import '../../../node_modules/fullcalendar/dist/fullcalendar.css';
 import 'fullcalendar';
 import SchedulesToEvents from "./SchedulesToEvents";
 import CalendarHtml from '../../html/Calendar.html';
+import SplashHtml from '../../html/Splash.html';
 import ConnectToFilemakerModalHtml from '../../html/ConnectToFilemakerModal.html';
 import AddVerifyScheduleHtml from '../../html/AddVerifySchedule.html';
 import ConfirmModalHtml from '../../html/ConfirmModal.html';
@@ -18,87 +19,25 @@ export default class Calendar {
     constructor(selector) {
         // calendar wrapper (user given)
         this.calendarWrapper = jQuery(selector);
-        this.calendarWrapper.html(CalendarHtml);
-        this.calendar = this.calendarWrapper.find('#full-calendar');
-
-        // modal
-        let body = jQuery('body');
-        body.append(ConnectToFilemakerModalHtml);
-        body.append(AddVerifyScheduleHtml);
-        body.append(ConfirmModalHtml);
-        this.connectToServerModal = jQuery(ConnectToFilemakerModalHtml);
+        this.calendarWrapper.html(SplashHtml);
         this.addVerifyScheduleModal = jQuery(AddVerifyScheduleHtml);
-        this.confirmModal = jQuery(ConfirmModalHtml);
+
+        this.connectToServerModal = jQuery(ConnectToFilemakerModalHtml);
         this.setupFmConnectModal(this.connectToServerModal);
-        this.setupAddVerifyScheduleModal(this.connectToServerModal);
 
-        // token
-        this.tokenToken = jQuery.cookie('token');
-        this.tokenServer = jQuery.cookie('server');
+        this.calendarWrapper.find('input.connectToServer').on("click", (e) => {
+            // testing code
+            let server = this.connectToServerModal.find('input[name="server"]');
+            let username = this.connectToServerModal.find('input[name="username"]');
+            let password = this.connectToServerModal.find('input[name="password"]');
+            server.val('soliant-fms-02.soliant.cloud');
+            username.val('sdevfmsadmin');
+            password.val('felt65:yeast');
+            // end testing code
 
-        this.initialLoad = true;
-
-        this.calendar.fullCalendar({
-            defaultView: 'agendaWeek',
-            customButtons: {
-                disconnectFromFileMaker: {
-                    text: 'Disconnect',
-                    click: (e) => {
-                        this.disconnect();
-                    }
-                },
-                addVerifySchedule: {
-                    text: 'Add Verify Schedule',
-                    click: (e) => {
-                        this.addVerifyScheduleModal.modal();
-                    }
-                }
-            },
-            eventAfterAllRender: () => {
-                this.prepCalendarActions();
-
-                if (this.initialLoad) {
-                    jQuery(".fc-disconnectFromFileMaker-button").after(
-                        "<div class='checkboxContainer' style='display:none'>" +
-                        "<label for='backups'>Backups:</label><input type='checkbox' id='backups' name='backups' checked> " +
-                        "<label for='scripts'>Scripts:</label><input type='checkbox' id='scripts' name='scripts' checked>" +
-                        "</div>"
-                    );
-
-                    this.refreshDisplay();
-
-                    if (this.hasServerInfo()) {
-                        this.fetchSchedules();
-                    }
-
-                    this.initialLoad = false;
-                    this.setupInitialCalendarActions();
-                }
-            },
-            eventRender: function (event, element) {
-                if (undefined !== event.data) {
-                    jQuery.each(event.data, (index, value) => {
-                        jQuery(element).data(index, value);
-                    });
-                }
-
-                if (undefined === event.ranges) {
-                    return true;
-                }
-
-                return (event.ranges.filter(function (range) {
-                    return (
-                        (undefined === range.end || event.start.isSameOrBefore(range.end, 'day')) &&
-                        (undefined === range.start || event.end.isSameOrAfter(range.start, 'day'))
-                    );
-                }).length) > 0;
-            },
-            header: {
-                left: 'prev,next today disconnectFromFileMaker addVerifySchedule',
-                center: 'title',
-                right: 'month,agendaWeek,agendaDay'
-            }
+            this.connectToServerModal.modal('show');
         });
+
     }
 
     setupInitialCalendarActions() {
@@ -143,9 +82,9 @@ export default class Calendar {
         let calendarWrapper = jQuery('.calendar-outer').fadeOut(400);
         let disconnectButton = jQuery('button.fc-disconnectFromFileMaker-button').fadeOut(400);
         let addVerifySchedule = jQuery('button.fc-addVerifySchedule-button').fadeOut(400);
-        let schedulesCheckboxes = this.calendar.find('div.checkboxContainer').fadeOut(400);
 
         if (this.hasServerInfo()) {
+            let schedulesCheckboxes = this.calendar.find('div.checkboxContainer').fadeOut(400);
             calendarWrapper.slideDown('slow');
             schedulesCheckboxes.fadeIn(400);
             this.showHideBackupEvents(this.calendar.find('#backups'));
@@ -153,8 +92,6 @@ export default class Calendar {
 
             disconnectButton.fadeIn(400);
             addVerifySchedule.fadeIn(400);
-        } else {
-            this.connectToServerModal.modal('show');
         }
     }
 
@@ -465,6 +402,88 @@ export default class Calendar {
             .fadeOut(400);
     }
 
+    initCalendar() {
+        this.calendarWrapper.html(CalendarHtml);
+        this.calendar = this.calendarWrapper.find('#full-calendar');
+        this.setupAddVerifyScheduleModal();
+
+        // modal
+        let body = jQuery('body');
+        body.append(ConnectToFilemakerModalHtml);
+        body.append(AddVerifyScheduleHtml);
+        body.append(ConfirmModalHtml);
+        this.confirmModal = jQuery(ConfirmModalHtml);
+
+        // token
+        this.tokenToken = jQuery.cookie('token');
+        this.tokenServer = jQuery.cookie('server');
+
+        this.initialLoad = true;
+
+        this.calendar.fullCalendar({
+            defaultView: 'agendaWeek',
+            customButtons: {
+                disconnectFromFileMaker: {
+                    text: 'Disconnect',
+                    click: (e) => {
+                        this.disconnect();
+                    }
+                },
+                addVerifySchedule: {
+                    text: 'Add Verify Schedule',
+                    click: (e) => {
+                        this.addVerifyScheduleModal.modal();
+                    }
+                }
+            },
+            eventAfterAllRender: () => {
+                this.prepCalendarActions();
+
+                if (this.initialLoad) {
+                    jQuery(".fc-disconnectFromFileMaker-button").after(
+                        "<div class='checkboxContainer' style='display:none'>" +
+                        "<label for='backups'>Backups:</label><input type='checkbox' id='backups' name='backups' checked> " +
+                        "<label for='scripts'>Scripts:</label><input type='checkbox' id='scripts' name='scripts' checked>" +
+                        "</div>"
+                    );
+
+                    this.refreshDisplay();
+
+                    if (this.hasServerInfo()) {
+                        this.fetchSchedules();
+                    }
+
+                    this.initialLoad = false;
+                    this.setupInitialCalendarActions();
+                }
+            },
+            eventRender: function (event, element) {
+                if (undefined !== event.data) {
+                    jQuery.each(event.data, (index, value) => {
+                        jQuery(element).data(index, value);
+                    });
+                }
+
+                if (undefined === event.ranges) {
+                    return true;
+                }
+
+                return (event.ranges.filter(function (range) {
+                    return (
+                        (undefined === range.end || event.start.isSameOrBefore(range.end, 'day')) &&
+                        (undefined === range.start || event.end.isSameOrAfter(range.start, 'day'))
+                    );
+                }).length) > 0;
+            },
+            header: {
+                left: 'prev,next today disconnectFromFileMaker addVerifySchedule',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            }
+        });
+
+    }
+
     setupFmConnectModal(modal) {
         modal.find('button.btn-success').on('click', () => {
             let serverUrl = modal.find('input[name="server"]').val();
@@ -482,14 +501,14 @@ export default class Calendar {
                     password: modal.find('input[name="password"]').val()
                 }),
             }).done((data) => {
-                modal.modal('hide');
                 this.setToken(data.token, serverUrl);
-                console.debug('setup refresh');
-                this.refreshDisplay();
-                this.fetchSchedules();
+                modal.modal('hide');
+                this.initCalendar()
+
             }).fail((e) => {
                 this.modalMessage(this.connectToServerModal, e.responseText, 'bg-danger');
             });
+
         });
     }
 
