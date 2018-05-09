@@ -19,6 +19,7 @@ else
     printf "\nERROR: es6/config/version.local.js.dist is missing. Cannot continue.\n"
     exit 1
 fi
+cp -n public/config/calendar.config.local.json.dist public/config/calendar.config.local.json
 
 docker-compose run --rm build webpack --mode development
 docker-compose exec web composer install

@@ -15,6 +15,7 @@ import '../../../node_modules/jquery.cookie/src/jquery.cookie'
 import 'eonasdan-bootstrap-datetimepicker';
 import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
 import ShowHideEvents from "./ShowHideEvents";
+import Proxy from "./Proxy";
 
 export default class Calendar {
     constructor(selector) {
@@ -25,14 +26,48 @@ export default class Calendar {
         this.connectToServerModal = jQuery(ConnectToFilemakerModalHtml);
         this.setupFmConnectModal(this.connectToServerModal);
 
+        // get optional config and boot the app
+        jQuery.ajax({
+            url: 'fms-ace-config.json',
+            cache: false,
+            type: 'GET',
+            dataType: 'json',
+            complete: () => {
+                this.finishSetup();
+            }
+        }).done((calendarConfig) => {
+            this.calendarConfig = calendarConfig;
+        }).fail(() => {
+            this.calendarConfig = {
+                useProxy: false,
+                proxyServers: [],
+            };
+        });
+    }
+
+    finishSetup() {
+        if (this.calendarConfig.useProxy) {
+            this.proxy = new Proxy();
+        }
+
         this.calendarWrapper.find('input.connectToServer').on("click", (e) => {
+            if (this.calendarConfig.useProxy) {
+                jQuery.each(this.calendarConfig.proxyServers, (i, serverConfig) => {
+                    this.connectToServerModal.find('#server').append(jQuery('<option>', {
+                        value: serverConfig.host,
+                        text: serverConfig.host
+                    }));
+                });
+            } else {
+                this.connectToServerModal.find('#server').closest('.form-group').hide();
+            }
+
             this.connectToServerModal.modal('show');
         });
-
     }
 
     prepCalendarActions() {
-        jQuery(document).find('a').filter(function() {
+        jQuery(document).find('a').filter(function () {
             return jQuery(this).data('actionDelete');
         }).on("click", (e) => {
             this.deleteSchedule(jQuery(e.currentTarget))
@@ -62,30 +97,43 @@ export default class Calendar {
     }
 
     fetchSchedules() {
-        jQuery.ajax({
-            url: '/proxy.php',
+        let urlConfig = {
+            url: '/fmi/admin/api/v1/schedules',
             cache: false,
-            headers: this.getHeaders('/fmi/admin/api/v1/schedules'),
             type: 'GET',
-        }).done((data) => {
-            this.calendar.fullCalendar('removeEventSources');
-            new SchedulesToEvents(
-                this.calendar,
-                data.schedules
-            );
-            this.message('Schedules Fetched', 'bg-success');
-        }).fail((e) => {
-            if (undefined !== e.responseJSON) {
-                let response = e.responseJSON;
-                let errorCode = response.result;
-                if (9 === errorCode) {
-                    this.disconnect();
+            headers: this.getHeaders(),
+        };
+
+        console.debug('urlConfig', urlConfig);
+
+        if (undefined !== this.proxy) {
+            urlConfig.url = 'https://' + this.tokenServer + urlConfig.url;
+            urlConfig = this.proxy.applyProxyWithHeaders(urlConfig);
+        }
+
+        console.debug('fetchSchedules', urlConfig);
+
+        jQuery.ajax(urlConfig)
+            .done((data) => {
+                this.calendar.fullCalendar('removeEventSources');
+                new SchedulesToEvents(
+                    this.calendar,
+                    data.schedules
+                );
+                this.message('Schedules Fetched', 'bg-success');
+            })
+            .fail((e) => {
+                if (undefined !== e.responseJSON) {
+                    let response = e.responseJSON;
+                    let errorCode = response.result;
+                    if (9 === errorCode) {
+                        this.disconnect();
+                    }
+                    this.message(errorCode + ': ' + response.errorMessage, 'bg-danger');
+                } else if (undefined !== e.responseText) {
+                    this.message(e.responseText, 'bg-danger');
                 }
-                this.message(errorCode + ': ' + response.errorMessage, 'bg-danger');
-            } else if(undefined !== e.responseText) {
-                this.message(e.responseText, 'bg-danger');
-            }
-        });
+            });
     }
 
     deleteSchedule(element) {
@@ -101,38 +149,51 @@ export default class Calendar {
         confirmButton.removeClass('btn-success').addClass('btn-danger').html('Delete');
         this.confirmModal.find('.modal-title').html('Delete Schedule?');
         this.confirmModal.find('div.message').html('Are you sure you want to delete this schedule?');
-        confirmButton.on('click', (e)=> {
-            jQuery.ajax({
-                url: '/proxy.php',
+        confirmButton.on('click', (e) => {
+            let urlConfig = {
+                url: '/fmi/admin/api/v1/schedules/' + deleteId,
                 cache: false,
-                headers: this.getHeaders('/fmi/admin/api/v1/schedules/' + deleteId),
                 type: 'DELETE',
-            }).done((data) => {
-                if (0 === data.result) {
-                    element.hide();
-                    this.message('Schedule Removed', 'bg-success');
-                }
-                this.confirmModal.modal('hide');
-            }).fail((e) => {
-                if (undefined !== e.responseJSON) {
-                    let response = e.responseJSON;
-                    let errorCode = response.result;
-                    if (9 === errorCode) {
-                        this.disconnect();
+                headers: this.getHeaders(),
+            };
+
+            console.debug('urlConfig 12', urlConfig);
+
+            if (undefined !== this.proxy) {
+                urlConfig.url = 'https://' + this.tokenServer + urlConfig.url;
+                urlConfig = this.proxy.applyProxyWithHeaders(urlConfig);
+                console.debug('urlConfig proxied', urlConfig);
+            }
+
+            console.debug('deleteSchedule', urlConfig);
+
+            jQuery.ajax(urlConfig)
+                .done((data) => {
+                    if (0 === data.result) {
+                        element.hide();
+                        this.message('Schedule Removed', 'bg-success');
                     }
-                    this.message(errorCode + ': ' + response.errorMessage, 'bg-danger');
-                } else if(undefined !== e.responseText) {
-                    this.message(e.responseText, 'bg-danger');
-                }
-            });
+                    this.confirmModal.modal('hide');
+                })
+                .fail((e) => {
+                    if (undefined !== e.responseJSON) {
+                        let response = e.responseJSON;
+                        let errorCode = response.result;
+                        if (9 === errorCode) {
+                            this.disconnect();
+                        }
+                        this.message(errorCode + ': ' + response.errorMessage, 'bg-danger');
+                    } else if (undefined !== e.responseText) {
+                        this.message(e.responseText, 'bg-danger');
+                    }
+                });
         });
 
         this.confirmModal.modal();
     }
 
-    getHeaders(serverEndpoint) {
+    getHeaders() {
         return {
-            'X-Proxy-URL': 'https://' + this.tokenServer + serverEndpoint,
             'Authorization': 'Bearer ' + this.tokenToken,
             'Content-Type': 'application/json',
         };
@@ -239,13 +300,24 @@ export default class Calendar {
                 data.emailAddresses = form.find('#emailAddresses').val();
             }
 
-            jQuery.ajax({
-                url: '/proxy.php',
+            let urlConfig = {
+                url: '/fmi/admin/api/v1/schedules',
                 cache: false,
-                headers: this.getHeaders('/fmi/admin/api/v1/schedules'),
                 type: 'post',
                 data: JSON.stringify(data),
-            }).done((data) => {
+                headers: this.getHeaders(),
+            };
+            console.debug('urlConfig 12', urlConfig);
+
+            if (undefined !== this.proxy) {
+                urlConfig.url = 'https://' + this.tokenServer + urlConfig.url;
+                urlConfig = this.proxy.applyProxyWithHeaders(urlConfig);
+                console.debug('urlConfig proxied', urlConfig);
+            }
+
+            console.debug('create verify schedule', urlConfig);
+
+            jQuery.ajax(urlConfig).done((data) => {
                 this.addVerifyScheduleModal.modal('hide');
                 console.debug('add refresh');
                 this.refreshDisplay();
@@ -336,21 +408,32 @@ export default class Calendar {
     }
 
     disconnect() {
-        jQuery.ajax({
-            url: '/proxy.php',
+        let urlConfig = {
+            url: '/fmi/admin/api/v1/user/logout',
             cache: false,
-            headers: this.getHeaders('/fmi/admin/api/v1/user/logout'),
             type: 'POST',
-        }).done((data) => {
-            this.clearToken();
-            this.refreshDisplay();
-            this.calendar.fullCalendar('removeEventSources');
-            this.message('Disconnected', 'bg-success');
-        }).fail((e) => {
-            this.clearToken();
-            this.refreshDisplay();
-            this.message(e.responseText, 'bg-danger');
-        });
+            headers: this.getHeaders(),
+        };
+
+        if (undefined !== this.proxy) {
+            urlConfig.url = 'https://' + this.tokenServer + urlConfig.url;
+            urlConfig = this.proxy.applyProxy(urlConfig);
+        }
+
+        console.debug('disconnect', urlConfig);
+
+        jQuery.ajax(urlConfig)
+            .done((data) => {
+                this.clearToken();
+                this.refreshDisplay();
+                this.calendar.fullCalendar('removeEventSources');
+                this.message('Disconnected', 'bg-success');
+            })
+            .fail((e) => {
+                this.clearToken();
+                this.refreshDisplay();
+                this.message(e.responseText, 'bg-danger');
+            });
     }
 
     message(message, bgClass) {
@@ -414,20 +497,16 @@ export default class Calendar {
                 this.prepCalendarActions();
 
                 if (this.initialLoad) {
+                    this.initialLoad = false;
+
                     jQuery(".fc-disconnectFromFileMaker-button").after(
                         "<div class='checkboxContainer' style='display:none'>" +
                         "<label for='backups'>Backups:</label><input type='checkbox' id='backups' name='backups' checked> " +
                         "<label for='scripts'>Scripts:</label><input type='checkbox' id='scripts' name='scripts' checked>" +
                         "</div>"
                     );
-
                     this.refreshDisplay();
-
-                    if (this.hasServerInfo()) {
-                        this.fetchSchedules();
-                    }
-
-                    this.initialLoad = false;
+                    this.fetchSchedules();
 
                     this.showHideEvents.setupCalendarAction('#backups', 'a.backup-event');
                     this.showHideEvents.setupCalendarAction('#scripts', 'a.script-event');
@@ -461,29 +540,45 @@ export default class Calendar {
     }
 
     setupFmConnectModal(modal) {
-        modal.find('button.btn-success').on('click', () => {
-            let serverUrl = modal.find('input[name="server"]').val();
-
-            jQuery.ajax({
-                url: '/proxy.php',
+        let connectButton = modal.find('button.btn-success');
+        connectButton.on('click', (e) => {
+            let serverUrl = modal.find('#server').val();
+            let urlConfig = {
+                url: '/fmi/admin/api/v1/user/login',
                 cache: false,
-                headers: {
-                    'X-Proxy-URL': 'https://' + serverUrl + '/fmi/admin/api/v1/user/login',
-                },
-                type: 'post',
+                type: 'POST',
                 contentType: "application/json",
                 data: JSON.stringify({
                     username: modal.find('input[name="username"]').val(),
                     password: modal.find('input[name="password"]').val()
                 }),
-            }).done((data) => {
-                this.setToken(data.token, serverUrl);
-                modal.modal('hide');
-                this.initCalendar()
+                beforeSend: () => {
+                    connectButton.html('<span class="glyphicon glyphicon-refresh spinning"></span> Loading...');
+                },
+                complete: () => {
+                    connectButton.html('Connect');
+                },
+            };
 
-            }).fail((e) => {
-                this.modalMessage(this.connectToServerModal, e.responseText, 'bg-danger');
-            });
+            if (undefined !== this.proxy) {
+                urlConfig.url = 'https://' + serverUrl + urlConfig.url;
+                urlConfig = this.proxy.applyProxy(urlConfig);
+            }
+
+            jQuery.ajax(urlConfig)
+                .done((data) => {
+                    if (undefined !== this.proxy) {
+                        this.proxy.tokenServer = serverUrl;
+                        this.proxy.tokenToken = data.token;
+                    }
+
+                    this.setToken(data.token, serverUrl);
+                    this.initCalendar();
+                    modal.modal('hide');
+                })
+                .fail((e) => {
+                    this.modalMessage(this.connectToServerModal, e.responseText, 'bg-danger');
+                });
         });
     }
 
