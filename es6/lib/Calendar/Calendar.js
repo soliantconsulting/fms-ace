@@ -14,6 +14,7 @@ import ConfirmModalHtml from '../../html/ConfirmModal.html';
 import '../../../node_modules/jquery.cookie/src/jquery.cookie'
 import 'eonasdan-bootstrap-datetimepicker';
 import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
+import ShowHideEvents from "./ShowHideEvents";
 
 export default class Calendar {
     constructor(selector) {
@@ -21,53 +22,13 @@ export default class Calendar {
         this.calendarWrapper = jQuery(selector);
         this.calendarWrapper.html(SplashHtml);
         this.addVerifyScheduleModal = jQuery(AddVerifyScheduleHtml);
-
         this.connectToServerModal = jQuery(ConnectToFilemakerModalHtml);
         this.setupFmConnectModal(this.connectToServerModal);
 
         this.calendarWrapper.find('input.connectToServer').on("click", (e) => {
-            // testing code
-            let server = this.connectToServerModal.find('input[name="server"]');
-            let username = this.connectToServerModal.find('input[name="username"]');
-            let password = this.connectToServerModal.find('input[name="password"]');
-            server.val('soliant-fms-02.soliant.cloud');
-            username.val('sdevfmsadmin');
-            password.val('felt65:yeast');
-            // end testing code
-
             this.connectToServerModal.modal('show');
         });
 
-    }
-
-    setupInitialCalendarActions() {
-        this.calendar.find('#backups').on("click", (e) => {
-            this.showHideBackupEvents(jQuery(e.currentTarget));
-        });
-
-        this.calendar.find('#scripts').on("click", (e) => {
-            this.showHideScriptEvents(jQuery(e.currentTarget));
-        });
-
-        this.showHideBackupEvents(this.calendar.find('#backups'));
-        this.showHideBackupEvents(this.calendar.find('#scripts'));
-    }
-
-    showHideBackupEvents(element) {
-        console.debug('showHideBackupEvents', element, element.prop('checked'));
-        if (element.prop('checked')) {
-            this.calendar.find('a.backup-event').show();
-        } else {
-            this.calendar.find('a.backup-event').hide();
-        }
-    }
-
-    showHideScriptEvents(element) {
-        if (element.prop('checked')) {
-            this.calendar.find('a.script-event').show();
-        } else {
-            this.calendar.find('a.script-event').hide();
-        }
     }
 
     prepCalendarActions() {
@@ -87,8 +48,9 @@ export default class Calendar {
             let schedulesCheckboxes = this.calendar.find('div.checkboxContainer').fadeOut(400);
             calendarWrapper.slideDown('slow');
             schedulesCheckboxes.fadeIn(400);
-            this.showHideBackupEvents(this.calendar.find('#backups'));
-            this.showHideBackupEvents(this.calendar.find('#scripts'));
+
+            this.showHideEvents.showHideEvents('#backups', 'a.backup-event');
+            this.showHideEvents.showHideEvents('#scripts', 'a.script-event');
 
             disconnectButton.fadeIn(400);
             addVerifySchedule.fadeIn(400);
@@ -405,6 +367,8 @@ export default class Calendar {
     initCalendar() {
         this.calendarWrapper.html(CalendarHtml);
         this.calendar = this.calendarWrapper.find('#full-calendar');
+        this.showHideEvents = new ShowHideEvents(this.calendar);
+
         this.setupAddVerifyScheduleModal();
 
         // modal
@@ -436,6 +400,10 @@ export default class Calendar {
                     }
                 }
             },
+            viewRender: () => {
+                this.showHideEvents.showHideEvents('#backups', 'a.backup-event');
+                this.showHideEvents.showHideEvents('#scripts', 'a.script-event');
+            },
             eventAfterAllRender: () => {
                 this.prepCalendarActions();
 
@@ -454,7 +422,9 @@ export default class Calendar {
                     }
 
                     this.initialLoad = false;
-                    this.setupInitialCalendarActions();
+
+                    this.showHideEvents.setupCalendarAction('#backups', 'a.backup-event');
+                    this.showHideEvents.setupCalendarAction('#scripts', 'a.script-event');
                 }
             },
             eventRender: function (event, element) {
@@ -508,7 +478,6 @@ export default class Calendar {
             }).fail((e) => {
                 this.modalMessage(this.connectToServerModal, e.responseText, 'bg-danger');
             });
-
         });
     }
 
