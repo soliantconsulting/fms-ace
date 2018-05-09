@@ -398,6 +398,12 @@ export default class Calendar {
                     click: (e) => {
                         this.addVerifyScheduleModal.modal();
                     }
+                },
+                refreshSchedule: {
+                    text: 'Refresh',
+                    click: (e) => {
+                        this.fetchSchedules();
+                    }
                 }
             },
             viewRender: () => {
@@ -446,7 +452,7 @@ export default class Calendar {
                 }).length) > 0;
             },
             header: {
-                left: 'prev,next today disconnectFromFileMaker addVerifySchedule',
+                left: 'prev,next today disconnectFromFileMaker addVerifySchedule,refreshSchedule',
                 center: 'title',
                 right: 'month,agendaWeek,agendaDay'
             }
