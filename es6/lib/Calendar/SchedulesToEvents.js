@@ -25,14 +25,13 @@ export default class SchedulesToEvents {
                 objectID: schedule.id,
                 textColor: 'black',
                 allDay: false,
-                className: undefined === schedule.backupType ? 'script-event' : 'backup-event',
+                className: this.buildClassName(schedule),
                 data: {},
             };
 
             if (1 === schedule.freqType) {
                 if (schedule.taskType === 'VERIFY') {
                     event.data.actionDelete = schedule.id
-                    event.className = null;
                 }
 
                 // freqType = 1 : ONCE
@@ -83,7 +82,7 @@ export default class SchedulesToEvents {
                 objectID: schedule.id,
                 textColor: 'black',
                 allDay: false,
-                className: undefined === schedule.backupType ? 'script-event' : 'backup-event',
+                className: this.buildClassName(schedule),
             };
 
             if (2 === schedule.freqType && schedule.dailyDays > 1) {
@@ -94,6 +93,10 @@ export default class SchedulesToEvents {
                 });
             }
         });
+    }
+
+    buildClassName(schedule) {
+        return 'event-' + schedule.taskType.toLowerCase().replace(' ', '-');
     }
 
     buildDow(daysOfTheWeek) {

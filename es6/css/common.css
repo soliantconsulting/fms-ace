@@ -15,10 +15,26 @@ button.connect {
     white-space: nowrap;
 }
 
-a.script-event {
-    background-color:lightgrey;
+a.event-backup {
+    background-color:#cc79a7;
 }
 
-a.backup-event {
-    background-color:lightskyblue;
+a.event-message {
+    background-color:#d55e00;
+}
+
+a.event-verify {
+    background-color:#009e73;
+}
+
+a.event-filemaker-script {
+    background-color:#0072b2;
+}
+
+a.event-system-script {
+    background-color:#e69f00;
+}
+
+a.event-sequence-script {
+    background-color:#56b4e9;
 }
