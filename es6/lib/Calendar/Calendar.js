@@ -200,9 +200,9 @@ export default class Calendar {
                 startDate: form.find('#startDate').data("DateTimePicker").date().format('YYYY-MM-DD-HH-mm-ss'),
                 target: parseInt(form.find('#target').val()),
                 messageText: form.find('#messageText').val(),
-                enableEndDate: form.find('#enableEndDate').prop('checked') ? 1 : 0,
-                sendEmail: form.find('#sendEmail').prop('checked') ? 1 : 0,
-                enabled: form.find('#enabled').prop('checked') ? 1 : 0,
+                enableEndDate: form.find('#enableEndDate').prop('checked'),
+                sendEmail: form.find('#sendEmail').prop('checked'),
+                enabled: form.find('#enabled').prop('checked'),
             };
 
             if (3 === data.target || 4 === data.target) {
