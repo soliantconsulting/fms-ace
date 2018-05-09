@@ -1,0 +1,9 @@
+{
+  "useProxy": true,
+  "proxyServers": [
+    {
+      "host": "server",
+      "scheme": "https"
+    },
+  ]
+}

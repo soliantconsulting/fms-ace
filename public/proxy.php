@@ -2,6 +2,8 @@
 
 require '../vendor/autoload.php';
 
-Geekality\CrossOriginProxy::proxy([
-    ['host' => 'soliant-fms-02.soliant.cloud', 'scheme' => 'https'],
-]);
+$string = file_get_contents("./fms-ace-config.json");
+
+$jsonConfig = json_decode($string, TRUE);
+
+Geekality\CrossOriginProxy::proxy($jsonConfig['proxyServers']);
