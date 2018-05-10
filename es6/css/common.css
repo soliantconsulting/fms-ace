@@ -19,37 +19,54 @@ a.event-backup {
     background-color:#cc79a7;
 }
 
-a.event-message {
-    background-color:#d55e00;
+a.backup-event {
+    background-color:lightskyblue;
 }
 
-a.event-verify {
-    background-color:#009e73;
+body { height: 100%; }
+
+footer { margin-top: 25px; margin-bottom: 25px; }
+footer a, footer a:visited, footer a:active { color: #dfb927; }
+footer a:hover { color: #000; text-decoration: underline; }
+ul.footer_social_links { display: inline; list-style-type: none; }
+ul.footer_social_links li { display: inline; float: right; }
+ul.footer_social_links li i { color: #333; font-size: .92em; margin-left: 10px; }
+ul.footer_social_links li a i { width: 24px; height: 24px; text-align: center; border-radius: 24px; line-height: 24px; vertical-align: middle; color: #FFF; background-color: #bbb; }
+ul.footer_social_links li a i:hover { background-color: #000; text-decoration: none; }
+
+@media (max-width: 992px) {
+    .social { clear: both; float: left; }
+    ul.footer_social_links li:first-child i { margin-left: 0; }
+    ul.footer_social_links li { float: left; margin-top: 15px; }
 }
 
-a.event-filemaker-script {
-    background-color:#0072b2;
+/* Splash Screen Styling */
+.splash { background-image: url("../images/bkgrnd-splash.jpg"); position: relative; background-position: center; background-repeat: no-repeat; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; margin: 0; padding: 75px 0; height: 100%; }
+.splash-block > img { width: 100%; }
+.splash-content h1 { color: #fff; font-size: 2.4em; font-weight: 300; line-height: 1.25em; margin-top: 0; margin-bottom: 1.5em; }
+.splash-content p { color: #fff; font-size: 1.5em; font-weight: 300; line-height: 1.4em; margin-bottom: 20px; }
+.splash-content p.acronym { font-weight: 400; margin-top: 10px; margin-bottom: 0;  }
+.splash-content p + .btn-group { margin-top: 15px; }
+.btn-white { border: none!important; color: #234063!important; }
+.btn-white:hover { opacity: .75; }
+.splash-content .message { background-color: #fff; color: #000; opacity: .4; margin-top: 60px; font-weight: 500; padding-top: 15px; padding-bottom: 15px; }
+
+
+@media (max-width: 992px) {
+    .splash-block > img { margin-bottom: 15px; }
+    .splash-content h1 { font-size: 1.75em; }
+    .splash-content p { font-size: 1.3em; }
 }
 
-a.event-system-script {
-    background-color:#e69f00;
-}
+/*Overrides for 3rd Party Calendar Stylying */
+#full-calendar { background-color: #fff; padding: 15px; }
+#calendar p.h1 { color: #fff; margin-bottom: 20px!important; }
+#calendar .bg-success { opacity: .4; font-weight: 500; margin-top: 15px; padding-top: 10px; padding-bottom: 10px; }
+.fc-center { clear: both; float: left; }
+.fc-toolbar .fc-center h2 { font-size: 1.86em; margin-top: 20px!important; text-align: center!important; }
+.fc-toolsbar .fc-header-toolbar .checboxContainer label { font-weight: 500!important;}
+.fc-toolsbar .fc-header-toolbar .checkboxContainer input[type="checkbox"] { margin: 4px 8px 0 4px!important; }
+.fc-unthemed th { background-color: #ddd; padding-top: 4px!important; padding-bottom: 4px!important;}
 
-a.event-sequence-script {
-    background-color:#56b4e9;
-}
-
-.glyphicon.spinning {
-    animation: spin 1s infinite linear;
-    -webkit-animation: spin2 1s infinite linear;
-}
-
-@keyframes spin {
-    from { transform: scale(1) rotate(0deg); }
-    to { transform: scale(1) rotate(360deg); }
-}
-
-@-webkit-keyframes spin2 {
-    from { -webkit-transform: rotate(0deg); }
-    to { -webkit-transform: rotate(360deg); }
-}
+.modal-content { border: none!important; }
+.modal-header { background-color: #21617A; color: #fff; -webkit-border-top-right-radius: 6px; -webkit-border-top-left-radius: 6px; -moz-border-radius-topright: 6px; -moz-border-radius-topleft: 6px; border-top-right-radius: 6px; border-top-left-radius: 6px; }
