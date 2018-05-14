@@ -4,6 +4,6 @@
     {
       "host": "example.soliant.cloud",
       "scheme": "https"
-    },
+    }
   ]
 }
