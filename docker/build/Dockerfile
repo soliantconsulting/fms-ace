@@ -2,6 +2,9 @@ FROM node:8.1
 
 RUN npm install -g yarn
 
+RUN apt-get update
+RUN apt-get -y install zip
+
 COPY entrypoint.sh /usr/bin/entrypoint.sh
 
 ENV PATH="/var/www/html/node_modules/.bin:${PATH}"

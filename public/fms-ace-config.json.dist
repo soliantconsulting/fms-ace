@@ -2,7 +2,7 @@
   "useProxy": true,
   "proxyServers": [
     {
-      "host": "server",
+      "host": "example.soliant.cloud",
       "scheme": "https"
     },
   ]
