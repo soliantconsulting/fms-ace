@@ -6,7 +6,7 @@ FileMaker Server Admin Console Extension. Pronounced as F-M-S Ace.
 
 Download the latest version from [here][zip] and copy the contents of the zip archive to the following location:
 
-[zip]: https://github.com/soliantconsulting/fms-ace/blob/master/built-files/fms-ace.zip
+[zip]: https://github.com/soliantconsulting/fms-ace/raw/master/built-files/fms-ace.zip
 
 ### Windows
 ```
