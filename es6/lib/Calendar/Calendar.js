@@ -519,6 +519,7 @@ export default class Calendar {
                     });
                 }
 
+                    jQuery(element).find(".fc-title").prepend("<i class='fa fa-fw fa-circle'></i>");
                 if (undefined === event.ranges) {
                     return true;
                 }

@@ -5,6 +5,7 @@ import '../css/common.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap';
 import Version from '../config/version.local';
+import 'font-awesome/css/font-awesome.css';
 
 jQuery(function () {
     let calendar = new Calendar('#calendar');

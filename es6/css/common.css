@@ -15,12 +15,28 @@ button.connect {
     white-space: nowrap;
 }
 
-a.event-backup {
-    background-color:#cc79a7;
+a.event-backup div.fc-content div.fc-title i {
+    color:#cc79a7;
 }
 
-a.backup-event {
-    background-color:lightskyblue;
+a.event-verify div.fc-content div.fc-title i {
+    color:#009e73;
+}
+
+a.event-filemaker-script div.fc-content div.fc-title i {
+    color:#0072b2;
+}
+
+a.event-system-script div.fc-content div.fc-title i {
+    color:#e69f00;
+}
+
+a.event-script-sequence div.fc-content div.fc-title i {
+    color:#f0e442;
+}
+
+a.event-message div.fc-content div.fc-title i {
+    color:#d55e00;
 }
 
 body { height: 100%; }
