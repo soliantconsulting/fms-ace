@@ -17,12 +17,7 @@ docker-compose run --rm build yarn install
 docker-compose run --rm build webpack --mode development
 
 # refresh built-files.zip with the build container
-docker-compose run --rm build rm -rf built-files*
-docker-compose run --rm build mkdir built-files
-docker-compose run --rm build cp -rp ./public/dist ./built-files/dist
-docker-compose run --rm build cp ./public/index.html ./built-files
-docker-compose run --rm build zip -r built-files.zip built-files/*
-docker-compose run --rm build rm -rf built-files/
+docker-compose run --rm build docker/build/release.sh
 
 # bring up the web server container
 docker-compose up -d --build web
@@ -30,20 +25,37 @@ docker-compose up -d --build web
 # run composer in the proxy web server container
 docker-compose exec web composer install
 
-read -r -d '' Heredoc_var <<'Heredoc_var'
+read -r -d '' Heredoc_message <<'Heredoc_message'
 \x1b[0m
-  _______
- | A .   |
- |  /.\  |
- | (FMS) |
- |   |   |
- |_____V_|
+!!!! !FMS ACE! !!!!
+!!    _______    !!
+!!   | A .   |   !!
+!!   |  /.\  |   !!
+!!   | (FMS) |   !!
+!!   |   |   |   !!
+!!   |_____V_|   !!
+!!               !!
+!!!! !FMS ACE! !!!!
 
- !FMS ACE!
-\x1b[0m
-Heredoc_var
-echo -e "$Heredoc_var"
+Refresh complete
+Your local proxy server should now be accessible in a browser at http://localhost:8080
+Heredoc_message
 
-echo 'Dev refresh complete'
-echo 'Make sure you have configured a FileMaker Server proxy in `public/fms-ace-config.json`'
-echo 'Your local proxy server should now be accessible in a browser at http://localhost:8080'
+echo -e "$Heredoc_message"
+
+if [ ! -f public/fms-ace-config.json ]; then
+echo ''
+echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+echo '!! You must configure the proxy for your FileMaker Server before FMS ACE will work. !!'
+echo '!!        Copy `public/fms-ace-config.json` as `public/fms-ace-config.json`.        !!'
+echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+fi
+
+if [ "$(docker-compose run --rm build diff public/fms-ace-config.json public/fms-ace-config.json.dist)" = "" ]; then
+echo ''
+echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+echo '!! You must configure the proxy for your FileMaker Server before FMS ACE will work. !!'
+echo '!!        Open `public/fms-ace-config.json` and update the `host` value.            !!'
+echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+fi
+echo ''
