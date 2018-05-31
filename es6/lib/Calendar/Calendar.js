@@ -12,22 +12,20 @@ import CalendarHtml from '../../html/Calendar.html';
 import SplashHtml from '../../html/Splash.html';
 import ConnectToFilemakerModalHtml from '../../html/ConnectToFilemakerModal.html';
 import EventDetailsModalHtml from '../../html/EventDetailsModal.html';
-import AddVerifyScheduleHtml from '../../html/AddVerifySchedule.html';
-import AddMessageScheduleHtml from '../../html/AddMessageSchedule.html';
 import ConfirmModalHtml from '../../html/ConfirmModal.html';
 import '../../../node_modules/jquery.cookie/src/jquery.cookie'
 import 'eonasdan-bootstrap-datetimepicker';
 import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
 import ShowHideEvents from "./ShowHideEvents";
 import Proxy from "./Proxy";
+import VerifySchedule from '../../lib/Calendar/VerifySchedule';
+import MessageSchedule from '../../lib/Calendar/MessageSchedule';
 
 export default class Calendar {
     constructor(selector) {
         // calendar wrapper (user given)
         this.calendarWrapper = jQuery(selector);
         this.calendarWrapper.html(SplashHtml);
-        this.addVerifyScheduleModal = jQuery(AddVerifyScheduleHtml);
-        this.addMessageScheduleModal = jQuery(AddMessageScheduleHtml);
         this.connectToServerModal = jQuery(ConnectToFilemakerModalHtml);
         this.eventDetailsModal = jQuery(EventDetailsModalHtml);
         this.storedButtons = null;
@@ -222,219 +220,6 @@ export default class Calendar {
         jQuery.cookie('token', tokenToken);
     }
 
-    setupAddVerifyScheduleModal() {
-        this.addVerifyScheduleModal.find('#freqType').on('change', () => {
-            this.showHideVerifyFields();
-        });
-
-        this.addVerifyScheduleModal.find('#enableEndDate').on('change', () => {
-            this.showHideVerifyFields();
-        });
-
-        this.addVerifyScheduleModal.find('#sendEmail').on('change', () => {
-            this.showHideVerifyFields();
-        });
-
-        this.addVerifyScheduleModal.find('#target').on('change', () => {
-            this.showHideVerifyFields();
-        });
-
-        this.addVerifyScheduleModal.find('#repeatTask').on('change', () => {
-            this.showHideVerifyFields();
-        });
-
-        this.showHideVerifyFields();
-
-        this.addVerifyScheduleModal.find('#startDate').datetimepicker({
-            showClear: true,
-            timeZone: window.timeZone
-        });
-
-        this.addVerifyScheduleModal.find('#endDate').datetimepicker({
-            showClear: true,
-            timeZone: window.timeZone
-        });
-
-        this.addVerifyScheduleModal.find('button.btn-success').on('click', () => {
-            let form = this.addVerifyScheduleModal.find('form');
-            let timeout = form.find('#timeout').val();
-
-            if (!this.isValid(form)) {
-                return;
-            }
-
-            let data = {
-                taskType: 4,
-                name: form.find('#name').val(),
-                freqType: parseInt(form.find('#freqType').val()),
-                startDate: form.find('#startDate').data("DateTimePicker").date().format('YYYY-MM-DD-HH-mm' + '-00'),
-                target: parseInt(form.find('#target').val()),
-                messageText: form.find('#messageText').val(),
-                enableEndDate: form.find('#enableEndDate').prop('checked'),
-                sendEmail: form.find('#sendEmail').prop('checked'),
-                enabled: form.find('#enabled').prop('checked'),
-            };
-
-            if (3 === data.target || 4 === data.target) {
-                data.fromTarget = form.find('#fromTarget').val();
-            }
-
-            if ('' !== timeout) {
-                data.timeout = parseInt(timeout);
-            }
-
-            if (form.find('#repeatTask').prop('checked')) {
-                data.repeatTask = true;
-                data.repeatInterval = parseInt(form.find('#repeatInterval').val());
-                data.repeatFrequency = parseInt(form.find('#repeatFrequency').val());
-            }
-
-            if (3 === data.freqType) {
-                let binaryDays = '';
-                jQuery.each(form.find('input[name="daysOfTheWeek[]"]'), (index, element) => {
-                    binaryDays += jQuery(element).prop('checked') ? '1' : '0';
-                });
-                data.daysOfTheWeek = binaryDays;
-            }
-
-            if (2 === data.freqType) {
-                data.dailyDays = parseInt(form.find('#dailyDays').val());
-            }
-
-            if (data.enableEndDate) {
-                data.endDate = form.find('#endDate').data("DateTimePicker").date().format('YYYY-MM-DD-HH-mm' + '-00');
-            }
-
-            if (data.sendEmail) {
-                data.emailAddresses = form.find('#emailAddresses').val();
-            }
-
-            let urlConfig = {
-                url: '/fmi/admin/api/v1/schedules',
-                cache: false,
-                type: 'post',
-                data: JSON.stringify(data),
-                headers: this.getHeaders(),
-            };
-
-            if (undefined !== this.proxy) {
-                urlConfig.url = this.tokenServer + urlConfig.url;
-                urlConfig = this.proxy.applyProxyWithHeaders(urlConfig);
-            }
-
-            jQuery.ajax(urlConfig).done((data) => {
-                this.addVerifyScheduleModal.modal('hide');
-                this.fetchSchedules();
-            }).fail((data) => {
-                this.modalMessage(this.addVerifyScheduleModal, data.responseJSON.errorMessage, 'bg-danger');
-            });
-        });
-    }
-
-    setupAddMessageScheduleModal() {
-        this.addMessageScheduleModal.find('#freqType').on('change', () => {
-            this.showHideMessageFields();
-        });
-
-        this.addMessageScheduleModal.find('#enableEndDate').on('change', () => {
-            this.showHideMessageFields();
-        });
-
-        this.addMessageScheduleModal.find('#sendEmail').on('change', () => {
-            this.showHideMessageFields();
-        });
-
-        this.addMessageScheduleModal.find('#target').on('change', () => {
-            this.showHideMessageFields();
-        });
-
-        this.addMessageScheduleModal.find('#repeatTask').on('change', () => {
-            this.showHideMessageFields();
-        });
-
-        this.showHideMessageFields();
-
-        this.addMessageScheduleModal.find('#startDate').datetimepicker({
-            showClear: true,
-            timeZone: window.timeZone
-        });
-
-        this.addMessageScheduleModal.find('#endDate').datetimepicker({
-            showClear: true,
-            timeZone: window.timeZone
-        });
-
-        this.addMessageScheduleModal.find('button.btn-success').on('click', () => {
-            let form = this.addMessageScheduleModal.find('form');
-
-            if (!this.isValid(form)) {
-                return;
-            }
-
-            let data = {
-                taskType: 3,
-                name: form.find('#name').val(),
-                freqType: parseInt(form.find('#freqType').val()),
-                startDate: form.find('#startDate').data("DateTimePicker").date().format('YYYY-MM-DD-HH-mm' + '-00'),
-                target: parseInt(form.find('#target').val()),
-                messageText: form.find('#messageText').val(),
-                enableEndDate: form.find('#enableEndDate').prop('checked'),
-                sendEmail: form.find('#sendEmail').prop('checked'),
-                enabled: form.find('#enabled').prop('checked'),
-            };
-
-            if (3 === data.target || 4 === data.target) {
-                data.fromTarget = form.find('#fromTarget').val();
-            }
-
-            if (form.find('#repeatTask').prop('checked')) {
-                data.repeatTask = true;
-                data.repeatInterval = parseInt(form.find('#repeatInterval').val());
-                data.repeatFrequency = parseInt(form.find('#repeatFrequency').val());
-            }
-
-            if (3 === data.freqType) {
-                let binaryDays = '';
-                jQuery.each(form.find('input[name="daysOfTheWeek[]"]'), (index, element) => {
-                    binaryDays += jQuery(element).prop('checked') ? '1' : '0';
-                });
-                data.daysOfTheWeek = binaryDays;
-            }
-
-            if (2 === data.freqType) {
-                data.dailyDays = parseInt(form.find('#dailyDays').val());
-            }
-
-            if (data.enableEndDate) {
-                data.endDate = form.find('#endDate').data("DateTimePicker").date().format('YYYY-MM-DD-HH-mm' + '-00');
-            }
-
-            if (data.sendEmail) {
-                data.emailAddresses = form.find('#emailAddresses').val();
-            }
-
-            let urlConfig = {
-                url: '/fmi/admin/api/v1/schedules',
-                cache: false,
-                type: 'post',
-                data: JSON.stringify(data),
-                headers: this.getHeaders(),
-            };
-
-            if (undefined !== this.proxy) {
-                urlConfig.url = this.tokenServer + urlConfig.url;
-                urlConfig = this.proxy.applyProxyWithHeaders(urlConfig);
-            }
-
-            jQuery.ajax(urlConfig).done((data) => {
-                this.addMessageScheduleModal.modal('hide');
-                this.fetchSchedules();
-            }).fail((data) => {
-                this.modalMessage(this.addMessageScheduleModal, data.responseJSON.errorMessage, 'bg-danger');
-            });
-        });
-    }
-
     isValid(form) {
         let isValid = true;
         let requiredFields = form.find(':input:visible[required="required"]');
@@ -456,133 +241,6 @@ export default class Calendar {
         });
 
         return isValid;
-    }
-
-    showHideVerifyFields() {
-        let form = this.addVerifyScheduleModal.find('form');
-        let targetValue = form.find('#target').val();
-        let freqType = form.find('#freqType').val();
-        let repeatTask = form.find('#repeatTask').prop('checked');
-        let enableEndDate = form.find('#enableEndDate').prop('checked');
-        let sendEmail = form.find('#sendEmail').prop('checked');
-
-        let repeatInterval = form.find('#repeatInterval').closest('.form-group');
-        let repeatFrequency = form.find('#repeatFrequency').closest('.form-group');
-        let fromTarget = form.find('#fromTarget').closest('.form-group');
-        let dailyDays = form.find('#dailyDays').closest('.form-group');
-        let daysOfTheWeek = form.find('input[name="daysOfTheWeek[]"]').closest('.form-group');
-        let endDate = form.find('#endDate').closest('.form-group');
-        let emailAddresses = form.find('#emailAddresses').closest('.form-group');
-        let enableEndDateWrapper = form.find('#enableEndDate').closest('.form-group');
-
-        if ('3' === targetValue || '4' === targetValue) {
-            fromTarget.show();
-        } else {
-            fromTarget.hide();
-        }
-
-        if (repeatTask) {
-            repeatInterval.show();
-            repeatFrequency.show();
-        } else {
-            repeatInterval.hide();
-            repeatFrequency.hide();
-        }
-
-        if ('1' === freqType) {
-            enableEndDateWrapper.hide();
-        } else {
-            enableEndDateWrapper.show();
-        }
-
-        if ('2' === freqType) {
-            dailyDays.show();
-        } else {
-            dailyDays.hide();
-        }
-
-        if ('3' === freqType) {
-            daysOfTheWeek.show();
-        } else {
-            daysOfTheWeek.hide();
-        }
-
-        if (enableEndDate || repeatTask) {
-            endDate.show();
-        } else {
-            endDate.hide();
-        }
-
-        if (sendEmail) {
-            emailAddresses.show();
-        } else {
-            emailAddresses.hide();
-        }
-    }
-
-    showHideMessageFields() {
-        let form = this.addMessageScheduleModal.find('form');
-        let targetValue = form.find('#target').val();
-        let freqType = form.find('#freqType').val();
-        let repeatTask = form.find('#repeatTask').prop('checked');
-        let enableEndDate = form.find('#enableEndDate').prop('checked');
-        let sendEmail = form.find('#sendEmail').prop('checked');
-
-        let repeatInterval = form.find('#repeatInterval').closest('.form-group');
-        let repeatFrequency = form.find('#repeatFrequency').closest('.form-group');
-        let fromTarget = form.find('#fromTarget').closest('.form-group');
-        let dailyDays = form.find('#dailyDays').closest('.form-group');
-        let daysOfTheWeek = form.find('input[name="daysOfTheWeek[]"]').closest('.form-group');
-        let endDate = form.find('#endDate').closest('.form-group');
-        let emailAddresses = form.find('#emailAddresses').closest('.form-group');
-        let repeatTaskWrapper = form.find('#repeatTask').closest('.form-group');
-        let enableEndDateWrapper = form.find('#enableEndDate').closest('.form-group');
-
-        if ('3' === targetValue || '4' === targetValue) {
-            fromTarget.show();
-        } else {
-            fromTarget.hide();
-        }
-
-        if ('1' === freqType) {
-            repeatTaskWrapper.hide();
-            enableEndDateWrapper.hide();
-        } else {
-            // repeatTaskWrapper.show();
-            enableEndDateWrapper.show();
-        }
-
-        if (repeatTask) {
-            repeatInterval.show();
-            repeatFrequency.show();
-        } else {
-            repeatInterval.hide();
-            repeatFrequency.hide();
-        }
-
-        if ('2' === freqType) {
-            dailyDays.show();
-        } else {
-            dailyDays.hide();
-        }
-
-        if ('3' === freqType) {
-            daysOfTheWeek.show();
-        } else {
-            daysOfTheWeek.hide();
-        }
-
-        if (enableEndDate || repeatTask) {
-            endDate.show();
-        } else {
-            endDate.hide();
-        }
-
-        if (sendEmail) {
-            emailAddresses.show();
-        } else {
-            emailAddresses.hide();
-        }
     }
 
     disconnect() {
@@ -631,13 +289,9 @@ export default class Calendar {
         this.calendar = this.calendarWrapper.find('#full-calendar');
         this.showHideEvents = new ShowHideEvents(this.calendar);
 
-        this.setupAddVerifyScheduleModal();
-        this.setupAddMessageScheduleModal();
-
         // modal
         let body = jQuery('body');
         body.append(ConnectToFilemakerModalHtml);
-        body.append(AddVerifyScheduleHtml);
         body.append(ConfirmModalHtml);
         this.confirmModal = jQuery(ConfirmModalHtml);
 
@@ -708,11 +362,11 @@ export default class Calendar {
                 });
 
                 this.calendarWrapper.find(".fc-addVerifySchedule-button").off('click').on('click', () => {
-                    this.addVerifyScheduleModal.modal();
+                    this.verifySchedule.showModal();
                 });
 
                 this.calendarWrapper.find(".fc-addMessageSchedule-button").off('click').on('click', () => {
-                    this.addMessageScheduleModal.modal();
+                    this.messageSchedule.showModal();
                 });
 
                 this.calendarWrapper.find(".fc-refreshSchedule-button").off('click').on('click', () => {
@@ -772,6 +426,8 @@ export default class Calendar {
             }
         });
 
+        this.verifySchedule = new VerifySchedule(this);
+        this.messageSchedule = new MessageSchedule(this);
     }
 
     setupFmConnectModal(modal) {
