@@ -42,15 +42,8 @@
     "buildcss": "node build/buildcss.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "ssh://git@versions.soliantconsulting.com:7999/aim/aim-high-development.git"
-  },
   "keywords": [
-    "filemaker",
-    "php7.1",
-    "simpleFm",
-    "expressive"
+    "filemaker"
   ],
   "author": "Jesse LaVere",
   "license": "ISC"
