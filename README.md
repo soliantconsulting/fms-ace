@@ -1,3 +1,7 @@
+# DEPRECATED
+
+Version 1.x was designed for FMS 17 and has not been updated in four years. There are numerous outdated library dependencies which have known security issues. We will not be updating version 1.x, but we have chosen not to archive it and make it read only, as there are future plans to create a version 2.x for use with FMS 19+.
+
 # FMS ACE
 
 FileMaker Server Admin Console Extension.
